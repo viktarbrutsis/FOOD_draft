@@ -47,7 +47,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   //Timer 
 
-  const deadLine = '2022-11-03';
+  const deadLine = '2023-11-03';
   function getTimeRemain(endtime) {
     const t = Date.parse(endtime) - Date.parse(new Date()),
       days = Math.floor(t / (1000 * 60 * 60 * 24)),
@@ -95,6 +95,123 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
   setClock('.timer', deadLine);
+
+  //Modal
+
+  const modalOpen = document.querySelectorAll('[data-modal]'),
+    modalWindow = document.querySelector('.modal'),
+    modalClose = document.querySelector('[data-close]');
+  function openModal() {
+    modalWindow.classList.add('show', 'fade');
+    modalWindow.classList.remove('hide');
+    // modalWindow.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    clearInterval(openModalId);
+  }
+  function closeModal() {
+    modalWindow.classList.add('hide');
+    modalWindow.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  modalOpen.forEach(item => {
+    item.addEventListener('click', () => {
+      openModal();
+    });
+  });
+  modalClose.addEventListener('click', () => {
+    modalWindow.classList.add('hide');
+    modalWindow.classList.remove('show');
+    // modalWindow.style.display = 'none';
+    document.body.style.overflow = '';
+  });
+
+  //закрытие модального окна по клику мимо него
+  modalWindow.addEventListener('click', e => {
+    if (e.target === modalWindow) {
+      modalWindow.classList.add('hide');
+      modalWindow.classList.remove('show');
+      // modalWindow.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+  });
+
+  // modalClose.addEventListener('click', closeModal);
+
+  // modalWindow.addEventListener('click', (e) => {
+  //     if(e.target === modalWindow) {
+  //         closeModal();
+  //     }
+  // });
+
+  //зактрытие модального окна нажатием клавиши Esc
+  document.addEventListener('keydown', e => {
+    if (e.code === "Escape" && modalWindow.classList.contains('show')) {
+      closeModal();
+    }
+  });
+
+  const openModalId = setTimeout(openModal, 6000);
+
+  function showModalByScroll() {
+    if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+      openModal();
+      window.removeEventListener('scroll', showModalByScroll);
+    }
+  }
+  window.addEventListener('scroll', showModalByScroll);
+
+  // window.addEventListener('scroll', () => {
+  //     if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+  //         openModal();
+  //     }
+  // });
+
+  //карточки Меню на каждый день
+
+  class MenuCard {
+    constructor(src, alt, title, descr, price, parentSelector) {
+      this.src = src;
+      this.alt = alt;
+      this.title = title;
+      this.descr = descr;
+      this.price = price;
+      this.parent = document.querySelector(parentSelector);
+      for (var _len = arguments.length, classes = new Array(_len > 6 ? _len - 6 : 0), _key = 6; _key < _len; _key++) {
+        classes[_key - 6] = arguments[_key];
+      }
+      this.classes = classes;
+      this.rate = 27;
+      this.changeUAH();
+    }
+    changeUAH() {
+      this.price = this.price * this.rate;
+    }
+    render() {
+      const element = document.createElement('div');
+      if (this.classes.length === 0) {
+        this.element = 'menu__item';
+        element.classList.add(this.element);
+      } else {
+        this.classes.forEach(className => {
+          element.classList.add(className);
+        });
+      }
+      element.innerHTML = `
+                <img src=${this.src} alt=${this.alt}>
+                <h3 class="menu__item-subtitle">${this.title}</h3>
+                <div class="menu__item-descr">${this.descr}</div>
+                <div class="menu__item-divider"></div>
+                <div class="menu__item-price">
+                    <div class="menu__item-cost">Цена:</div>
+                    <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                </div>
+            `;
+      this.parent.append(element);
+    }
+  }
+  new MenuCard("img/tabs/vegy.jpg", "vegy", 'Меню "Фитнес"', 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 9, '.menu .container', 'menu__item').render();
+  new MenuCard("img/tabs/elite.jpg", "elite", 'Меню “Премиум”', 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!', 20, '.menu .container').render();
+  new MenuCard("img/tabs/post.jpg", "post", 'Меню "Постное"', 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.', 16, '.menu .container').render();
 });
 /******/ })()
 ;
