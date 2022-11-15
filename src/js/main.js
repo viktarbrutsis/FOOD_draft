@@ -275,7 +275,7 @@ window.addEventListener('DOMContentLoaded', () => {
             form.appendChild(statusMessage);
         
             const request = new XMLHttpRequest();
-            request.open('POST', 'server.php');
+            request.open('POST', 'js/server.php');
             request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
             const formData = new FormData(form);
 
@@ -283,7 +283,7 @@ window.addEventListener('DOMContentLoaded', () => {
             formData.forEach(function(value, key){
                 object[key] = value;
             });
-            
+
             const json = JSON.stringify(object);
 
             request.send(json);
